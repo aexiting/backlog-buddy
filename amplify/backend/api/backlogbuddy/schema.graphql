@@ -14,7 +14,8 @@ type BacklogItem
   createdAt: AWSDateTime!
   owner: String!
   status: ItemStatus
+  image: String!
 }
 
 enum ItemType { GAME MANGA ANIME }
-enum ItemStatus { COMPLETED NOT_STARTED PENDING }
+enum ItemStatus { COMPLETED NOT_STARTED PENDING DROPPED }
