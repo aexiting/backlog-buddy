@@ -1,10 +1,25 @@
 {
   "api": {
     "backlogbuddy": {
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "backlogbuddy0f7c13df"
+        }
+      ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [],
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authbacklogbuddy0f7c13df"
+              }
+            }
+          ],
           "defaultAuthentication": {
             "apiKeyConfig": {
               "apiKeyExpirationDays": 7
@@ -18,7 +33,7 @@
     }
   },
   "auth": {
-    "backlogbuddy226d39ae": {
+    "backlogbuddy0f7c13df": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@aws-amplify/ui-react-core": "^3.4.3"
+  }
+}
