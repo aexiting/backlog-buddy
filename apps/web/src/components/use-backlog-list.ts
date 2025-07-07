@@ -1,7 +1,6 @@
-import { type BacklogItem, listBacklogItems } from '../graphql';
+import { type BacklogItem, listBacklogItems, onCreateBacklogItem } from '../graphql';
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 
 
 export type BacklogListState = {
@@ -38,7 +37,7 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
         await fetchBacklog()
     }
 
-    const fetchBacklog = useCallback( async () =>  {
+    const fetchBacklog = useCallback(async () => {
         setState(prevState => ({ ...prevState, isError: false, isLoading: true }))
         try {
             const token = nextTokenRef.current
@@ -48,7 +47,11 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
                 authMode: "userPool"
             })
             const backlogData = data.listBacklogItems
-            setState(prevState => ({ ...prevState, hasMore: backlogData.nextToken != null, items: [...prevState.items, ...backlogData.items] }))
+            setState(prevState => ({
+                ...prevState,
+                hasMore: backlogData.nextToken != null,
+                items: [...prevState.items, ...backlogData.items]
+            }))
             nextTokenRef.current = backlogData.nextToken || undefined
 
         } catch (err) {
@@ -65,6 +68,18 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
         fetchBacklog()
     }, [fetchBacklog]);
 
-
+    useEffect(() => {
+        const sub = client.graphql({
+            query: onCreateBacklogItem,
+            authMode: 'userPool',
+        }).subscribe({
+            next: ({ data }) => setState(prevState => ({
+                ...prevState,
+                items: [...prevState.items, data.onCreateBacklogItem]
+            }))
+            ,
+        });
+        return () => sub.unsubscribe();
+    }, []);
     return [state, { loadMoreBacklog }]
 }

@@ -11,7 +11,7 @@ import { useBacklogInput } from "./components/use-backlog-input.ts";
 
 
 type AppProps = {
-    signOut?: UseAuthenticator["signOut"]; //() => void;
+    signOut?: UseAuthenticator["signOut"];
     user?: AuthUser;
 };
 
