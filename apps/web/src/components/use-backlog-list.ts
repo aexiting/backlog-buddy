@@ -1,8 +1,7 @@
-import { BacklogItem, listBacklogItems } from '../graphql';
+import { type BacklogItem, listBacklogItems } from '../graphql';
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const client = generateClient();
 
 
 export type BacklogListState = {
@@ -29,6 +28,7 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
     // maybe use some pagination. done
     // then display them for the user in a list done
     // later on we can add buttons to update the state for backlog items working...
+    const client = generateClient();
 
     const [state, setState] = useState(initialState);
     const nextTokenRef = useRef<string | undefined>(undefined);
@@ -48,6 +48,7 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
                 authMode: "userPool"
             })
             const backlogData = data.listBacklogItems
+            console.log(backlogData)
             setState(prevState => ({ ...prevState, hasMore: backlogData.nextToken != null, items: [...prevState.items, ...backlogData.items] }))
             nextTokenRef.current = backlogData.nextToken || undefined
 

@@ -8,6 +8,7 @@ type BacklogListProps = {
 }
 
 export const BacklogList = ({ state, actions }: BacklogListProps) => {
+    console.log(state)
     const { items, hasMore, isLoading, isError } = state;
     const { loadMoreBacklog } = actions;
     if (!items || items.length == 0) {

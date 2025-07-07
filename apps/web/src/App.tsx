@@ -15,7 +15,7 @@ type AppProps = {
 };
 
 const App = ({ signOut, user }: AppProps) => {
-    const { state, actions } = useBacklogList();
+    const [ state, actions ] = useBacklogList();
 
     return (
         <div>
