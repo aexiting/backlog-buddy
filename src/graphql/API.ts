@@ -10,6 +10,7 @@ export type CreateBacklogItemInput = {
   createdAt?: string | null,
   owner: string,
   status?: ItemStatus | null,
+  image: string,
 };
 
 export enum ItemType {
@@ -23,6 +24,7 @@ export enum ItemStatus {
   COMPLETED = "COMPLETED",
   NOT_STARTED = "NOT_STARTED",
   PENDING = "PENDING",
+  DROPPED = "DROPPED",
 }
 
 
@@ -33,6 +35,7 @@ export type ModelBacklogItemConditionInput = {
   createdAt?: ModelStringInput | null,
   owner?: ModelStringInput | null,
   status?: ModelItemStatusInput | null,
+  image?: ModelStringInput | null,
   and?: Array< ModelBacklogItemConditionInput | null > | null,
   or?: Array< ModelBacklogItemConditionInput | null > | null,
   not?: ModelBacklogItemConditionInput | null,
@@ -110,6 +113,7 @@ export type BacklogItem = {
   createdAt: string,
   owner: string,
   status?: ItemStatus | null,
+  image: string,
   updatedAt: string,
 };
 
@@ -121,6 +125,7 @@ export type UpdateBacklogItemInput = {
   createdAt?: string | null,
   owner?: string | null,
   status?: ItemStatus | null,
+  image?: string | null,
 };
 
 export type DeleteBacklogItemInput = {
@@ -135,6 +140,7 @@ export type ModelBacklogItemFilterInput = {
   createdAt?: ModelStringInput | null,
   owner?: ModelStringInput | null,
   status?: ModelItemStatusInput | null,
+  image?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelBacklogItemFilterInput | null > | null,
   or?: Array< ModelBacklogItemFilterInput | null > | null,
@@ -170,6 +176,7 @@ export type ModelSubscriptionBacklogItemFilterInput = {
   rating?: ModelSubscriptionIntInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   status?: ModelSubscriptionStringInput | null,
+  image?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionBacklogItemFilterInput | null > | null,
   or?: Array< ModelSubscriptionBacklogItemFilterInput | null > | null,
@@ -233,6 +240,7 @@ export type CreateBacklogItemMutation = {
     createdAt: string,
     owner: string,
     status?: ItemStatus | null,
+    image: string,
     updatedAt: string,
   } | null,
 };
@@ -252,6 +260,7 @@ export type UpdateBacklogItemMutation = {
     createdAt: string,
     owner: string,
     status?: ItemStatus | null,
+    image: string,
     updatedAt: string,
   } | null,
 };
@@ -271,6 +280,7 @@ export type DeleteBacklogItemMutation = {
     createdAt: string,
     owner: string,
     status?: ItemStatus | null,
+    image: string,
     updatedAt: string,
   } | null,
 };
@@ -289,6 +299,7 @@ export type GetBacklogItemQuery = {
     createdAt: string,
     owner: string,
     status?: ItemStatus | null,
+    image: string,
     updatedAt: string,
   } | null,
 };
@@ -311,6 +322,7 @@ export type ListBacklogItemsQuery = {
       createdAt: string,
       owner: string,
       status?: ItemStatus | null,
+      image: string,
       updatedAt: string,
     } | null >,
     nextToken?: string | null,
@@ -332,6 +344,7 @@ export type OnCreateBacklogItemSubscription = {
     createdAt: string,
     owner: string,
     status?: ItemStatus | null,
+    image: string,
     updatedAt: string,
   } | null,
 };
@@ -351,6 +364,7 @@ export type OnUpdateBacklogItemSubscription = {
     createdAt: string,
     owner: string,
     status?: ItemStatus | null,
+    image: string,
     updatedAt: string,
   } | null,
 };
@@ -370,6 +384,7 @@ export type OnDeleteBacklogItemSubscription = {
     createdAt: string,
     owner: string,
     status?: ItemStatus | null,
+    image: string,
     updatedAt: string,
   } | null,
 };
