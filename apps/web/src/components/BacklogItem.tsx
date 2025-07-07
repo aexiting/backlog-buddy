@@ -1,12 +1,12 @@
-import { BacklogStatus, BacklogType } from "../data/types.ts";
+import { ItemStatus, ItemType } from "../graphql";
 
 export type BacklogItemProps = {
-    status: BacklogStatus;
-    type: BacklogType;
+    status: ItemStatus;
+    type: ItemType;
     title: string;
     image: string;
     rating: number;
-    addedTime: string;
+    createdAt: string;
     id: string;
 }
 
@@ -16,7 +16,7 @@ export const BacklogItem = ({
                                 image,
                                 rating,
                                 type,
-                                addedTime,
+                                createdAt,
                                 id
                             }: BacklogItemProps) => {
     return (
@@ -26,7 +26,7 @@ export const BacklogItem = ({
             <h2> Rating: {rating}</h2>
             <span>{status}</span>
             <span>{type}</span>
-            <span>{addedTime}</span>
+            <span>{createdAt}</span>
         </div>
     )
 }

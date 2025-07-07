@@ -10,10 +10,10 @@ type BacklogItem
   id: ID!
   title: String!
   type: ItemType!
-  rating: Int
+  rating: Int!
   createdAt: AWSDateTime!
   owner: String!
-  status: ItemStatus
+  status: ItemStatus!
   image: String!
 }
 

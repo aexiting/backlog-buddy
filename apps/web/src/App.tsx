@@ -1,4 +1,3 @@
-import { generateClient } from 'aws-amplify/api';
 
 import { Button, Heading, withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
@@ -14,9 +13,10 @@ type AppProps = {
     user?: AuthUser;
 };
 
-const App = ({ signOut, user }: AppProps) => {
+const App = withAuthenticator(({ signOut, user }: AppProps) => {
     const [ state, actions ] = useBacklogList();
 
+    if (!signOut || !user) return <div>An auth error occurred. Please refresh.</div>
     return (
         <div>
             <Heading level={1}>Hello {user.username}</Heading>
@@ -24,6 +24,6 @@ const App = ({ signOut, user }: AppProps) => {
             <h2>{user.username}'s Backlog Buddy</h2>
             <BacklogList state={state} actions={actions}/>
         </div>)
-};
+});
 
-export default withAuthenticator(App);
+export default App;
