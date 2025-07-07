@@ -6,6 +6,8 @@ import { type AuthUser } from "aws-amplify/auth";
 import { type UseAuthenticator } from '@aws-amplify/ui-react-core';
 import { useBacklogList } from "./components/use-backlog-list.ts";
 import { BacklogList } from "./components/BacklogList.tsx";
+import { BacklogInputForm } from "./components/BacklogInputForm.tsx";
+import { useBacklogInput } from "./components/use-backlog-input.ts";
 
 
 type AppProps = {
@@ -14,15 +16,17 @@ type AppProps = {
 };
 
 const App = withAuthenticator(({ signOut, user }: AppProps) => {
-    const [ state, actions ] = useBacklogList();
-
     if (!signOut || !user) return <div>An auth error occurred. Please refresh.</div>
+
+    const [listState, listActions] = useBacklogList();
+    const [inputState, inputActions] = useBacklogInput({addToBacklogList: listActions.loadMoreBacklog, username: user.username});
     return (
         <div>
+            <BacklogInputForm state={inputState} actions={inputActions}/>
             <Heading level={1}>Hello {user.username}</Heading>
             <Button onClick={signOut}>Sign out</Button>
             <h2>{user.username}'s Backlog Buddy</h2>
-            <BacklogList state={state} actions={actions}/>
+            <BacklogList state={listState} actions={listActions}/>
         </div>)
 });
 
