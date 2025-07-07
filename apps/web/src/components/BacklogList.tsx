@@ -1,5 +1,7 @@
 import { BacklogItem } from "./BacklogItem.tsx";
 import type { BacklogListActions, BacklogListState } from "./use-backlog-list.ts";
+import { motion } from 'framer-motion';
+import { Button, Flex, Loader } from "@aws-amplify/ui-react";
 
 
 type BacklogListProps = {
@@ -20,15 +22,29 @@ export const BacklogList = ({ state, actions }: BacklogListProps) => {
     }
 
     return (
-        <div>
+        <Flex direction="column">
             {hasMore && (
-                <button onClick={() => loadMoreBacklog()} disabled={isLoading}>
-                    {isLoading ? 'Loading…' : 'Load more'}
-                </button>
+                <Flex justifyContent="center">
+                    <Button
+                        variation="primary"
+                        onClick={() => loadMoreBacklog()}
+                        isLoading={isLoading}
+                    >
+                        {isLoading ? <Loader size="small" /> : 'Load more'}
+                    </Button>
+                </Flex>
             )}
-            {items.map((item) => (
-                <BacklogItem {...item}/>
-            ))}
-        </div>
+
+            <Flex wrap="wrap" justifyContent="center" gap="xlarge">
+                {items.map(item => (
+                    <motion.div
+                        key={item.id}
+                        whileHover={{ scale: 1.05 }}
+                    >
+                        <BacklogItem {...item} />
+                    </motion.div>
+                ))}
+            </Flex>
+        </Flex>
     )
 }

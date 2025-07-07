@@ -1,6 +1,6 @@
 projects:
   backlogbuddy:
-    schemaPath: src/graphql/schema.json
+    schemaPath: amplify/backend/api/backlogbuddy/build/schema.graphql
     includes:
       - src/graphql/**/*.ts
     excludes:

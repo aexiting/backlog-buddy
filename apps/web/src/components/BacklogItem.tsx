@@ -1,4 +1,5 @@
 import { ItemStatus, ItemType } from "../graphql";
+import { Badge, Card, Flex, Heading, Image, Rating, useTheme, View } from "@aws-amplify/ui-react";
 
 export type BacklogItemProps = {
     status: ItemStatus;
@@ -10,6 +11,40 @@ export type BacklogItemProps = {
     id: string;
 }
 
+const MAX_RATING = 5;
+
+
+type DatePillProps = {
+    date: string; // or Date
+};
+
+export const DatePill = ({ date }: DatePillProps) => {
+    const { tokens } = useTheme();
+
+    // format however you like; here we go MM/DD/YYYY
+    const formatted = new Date(date).toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+    });
+
+    return (
+        <Badge
+            variation="default"
+            size="small"
+            style={{
+                borderRadius: tokens.radii.full,           // makes it a pill
+                paddingInline: tokens.space.small,         // horizontal padding
+                paddingBlock: `6px`,                       // slight vertical padding
+                fontWeight: tokens.fontWeights.medium,
+            }}
+        >
+            {formatted}
+        </Badge>
+    );
+};
+
+
 export const BacklogItem = ({
                                 status,
                                 title,
@@ -19,14 +54,56 @@ export const BacklogItem = ({
                                 createdAt,
                                 id
                             }: BacklogItemProps) => {
+    const { tokens } = useTheme();
+
     return (
-        <div key={id}>
-            <img src={image} alt={title}/>
-            <h1> {title}</h1>
-            <h2> Rating: {rating}</h2>
-            <span>{status}</span>
-            <span>{type}</span>
-            <span>{createdAt}</span>
-        </div>
+        <Card
+            variation="elevated"
+            backgroundColor={tokens.colors.background.primary}
+
+            padding={tokens.space.medium}
+            as="button"
+        >
+            <Flex direction="column" alignItems="flex-start">
+                <View width="100%" height="0" paddingBottom="140%">
+                    <Image alt={title}
+                           src={"https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154768-DHHvNd4MjV1p.jpg"}
+                           objectFit="cover"/>
+                </View>
+
+                <Flex direction="row" alignItems="flex-start" marginBlockEnd="0">
+                    <Heading level={5}>
+                        {title}
+                    </Heading>
+                </Flex>
+                <Flex>
+                    <Badge size="small" variation="info">
+                        {type}
+                    </Badge>
+                    <Badge
+                        size="small"
+                        variation={
+                            status === 'COMPLETED'
+                                ? 'success'
+                                : status === 'DROPPED'
+                                    ? 'error'
+                                    : 'info'
+                        }
+                    >
+                        {status.replace('_', ' ')}
+                    </Badge>
+                    <DatePill date={createdAt} />
+
+                </Flex>
+                <Flex>
+                    <Rating
+                        value={rating}
+                        maxValue={MAX_RATING}
+                        fillColor={tokens.colors.teal["80"]}
+                        emptyColor={tokens.colors.neutral["40"]}
+                    />
+                </Flex>
+            </Flex>
+        </Card>
     )
 }

@@ -48,7 +48,6 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
                 authMode: "userPool"
             })
             const backlogData = data.listBacklogItems
-            console.log(backlogData)
             setState(prevState => ({ ...prevState, hasMore: backlogData.nextToken != null, items: [...prevState.items, ...backlogData.items] }))
             nextTokenRef.current = backlogData.nextToken || undefined
 
@@ -61,6 +60,8 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
     }, [])
 
     useEffect(() => {
+        if (state.items.length > 0) return
+        console.log('fetching')
         fetchBacklog()
     }, [fetchBacklog]);
 
