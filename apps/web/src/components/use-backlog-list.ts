@@ -1,4 +1,10 @@
-import { type BacklogItem, listBacklogItems, type ListBacklogItemsQuery, onCreateBacklogItem } from '../graphql';
+import {
+    type BacklogItem,
+    listBacklogItems,
+    type ListBacklogItemsQuery,
+    onCreateBacklogItem,
+    onDeleteBacklogItem, onUpdateBacklogItem
+} from '../graphql';
 import { generateClient, type GraphQLQuery } from "aws-amplify/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -78,7 +84,7 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
     }, [fetchBacklog]);
 
     useEffect(() => {
-        const sub = client.graphql({
+        const createSub = client.graphql({
             query: onCreateBacklogItem,
             authMode: 'userPool',
         }).subscribe({
@@ -88,7 +94,31 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
             }))
             ,
         });
-        return () => sub.unsubscribe();
+        const updateSub = client.graphql({
+            query: onUpdateBacklogItem,
+            authMode: 'userPool',
+        }).subscribe({
+            next: ({ data }) => setState(prevState => ({
+                ...prevState,
+                items: prevState.items.map(item => item.id === data.onUpdateBacklogItem.id ? data.onUpdateBacklogItem : item )
+            }))
+            ,
+        });
+        const deleteSub = client.graphql({
+            query: onDeleteBacklogItem,
+            authMode: 'userPool',
+        }).subscribe({
+            next: ({ data }) => setState(prevState => ({
+                ...prevState,
+                items: prevState.items.filter(item => item.id !== data.onDeleteBacklogItem.id)
+            }))
+            ,
+        });
+        return () => {
+            createSub.unsubscribe();
+            updateSub.unsubscribe();
+            deleteSub.unsubscribe();
+        }
     }, []);
 
     return [state, {

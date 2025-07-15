@@ -1,6 +1,6 @@
 import { type BacklogItem, type CreateBacklogItemInput, ItemStatus, ItemType } from "../API.ts";
 import { generateClient } from "aws-amplify/api";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createBacklogItem, deleteBacklogItem, updateBacklogItem } from "../graphql";
 
 export interface MediaMeta {
@@ -59,7 +59,8 @@ export const useBacklogInput = ({
     // set up state
     // based on state create new backlog function and add it
     // if success use callback to update the frontend as well....
-    const client = generateClient();
+    const clientRef = useRef(generateClient());
+    const client = clientRef.current;
 
     const [state, setState] = useState(initialState);
 
@@ -67,7 +68,6 @@ export const useBacklogInput = ({
         if (!activeItem) {
             return
         }
-        console.log(activeItem.title)
         setState(prevState => ({
             ...prevState,
             isEditMode: true,
@@ -97,7 +97,6 @@ export const useBacklogInput = ({
                 },
                 authMode: "userPool"
             })
-            console.log(response)
 
             setState(prevState => ({ ...prevState, input: initialInput, isEditMode: false }));
             clearActiveItem()
@@ -108,7 +107,7 @@ export const useBacklogInput = ({
         } finally {
             setState(prevState => ({ ...prevState, isLoading: false }))
         }
-    }, [state.input])
+    }, [activeItem?.id, state.input.rating, state.input.status])
 
     const submitBacklogItem = useCallback(async () => {
         if (!state.input.title?.trim()) return;
@@ -144,6 +143,7 @@ export const useBacklogInput = ({
             setState(prevState => ({ ...prevState, isLoading: false }))
         }
     }, [state.input])
+    
     const submitBacklogDelete = useCallback(async () => {
         setState(prevState => ({ ...prevState, isLoading: true, isError: false }))
         const backlogItem = {
@@ -168,7 +168,7 @@ export const useBacklogInput = ({
         } finally {
             setState(prevState => ({ ...prevState, isLoading: false }))
         }
-    }, [state.input])
+    }, [activeItem?.id])
 
     return [state, {
         setInput: (input: FormInput) => setState(prevState => ({ ...prevState, input: {...prevState, ...input} })),

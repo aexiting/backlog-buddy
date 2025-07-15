@@ -50,7 +50,13 @@ export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
                     {isEditMode && <Button
                         variation="warning"
                         loadingText="Deleting..."
-                        onClick={()=> submitBacklogDelete()}
+                        onClick={()=> {
+
+                            const confirmed = confirm("Are you sure you want to delete the current backlog item?")
+                            if (confirmed) {
+                                submitBacklogDelete()
+                            }
+                        }}
                     >
                         Delete
                     </Button>}
