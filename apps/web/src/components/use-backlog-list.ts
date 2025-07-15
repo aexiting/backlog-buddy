@@ -1,5 +1,5 @@
-import { type BacklogItem, listBacklogItems, onCreateBacklogItem } from '../graphql';
-import { generateClient } from "aws-amplify/api";
+import { type BacklogItem, listBacklogItems, type ListBacklogItemsQuery, onCreateBacklogItem } from '../graphql';
+import { generateClient, type GraphQLQuery } from "aws-amplify/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 
@@ -41,18 +41,26 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
         setState(prevState => ({ ...prevState, isError: false, isLoading: true }))
         try {
             const token = nextTokenRef.current
-            const { data } = await client.graphql({
+            const { data } = await client.graphql<
+                GraphQLQuery<ListBacklogItemsQuery>
+            >({
                 query: listBacklogItems,
                 variables: { limit: PAGE_LIMIT, nextToken: token },
                 authMode: "userPool"
             })
             const backlogData = data.listBacklogItems
+
+            if (!backlogData) {
+                console.log("No backlog data available.")
+                return
+            }
+
             setState(prevState => ({
                 ...prevState,
-                hasMore: backlogData.nextToken != null,
-                items: [...prevState.items, ...backlogData.items]
+                hasMore: !!backlogData.nextToken,
+                items: [...prevState.items, ...backlogData.items.filter(item => item !== null)]
             }))
-            nextTokenRef.current = backlogData.nextToken || undefined
+            nextTokenRef.current = backlogData.nextToken ?? undefined
 
         } catch (err) {
             setState(prevState => ({ ...prevState, isError: true }))

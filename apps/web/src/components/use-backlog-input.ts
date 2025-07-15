@@ -1,9 +1,7 @@
-import { BacklogStatus } from "../data/types.ts";
 import { type BacklogItem, type CreateBacklogItemInput, ItemType } from "../API.ts";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
 import { createBacklogItem } from "../graphql";
-import type { AuthUser } from "aws-amplify/auth";
 
 export interface MediaMeta {
     fullTitle: string;
