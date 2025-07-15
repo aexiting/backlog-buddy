@@ -8,7 +8,6 @@ export type BacklogItemProps = {
     image: string;
     rating: number;
     createdAt: string;
-    id: string;
 }
 
 const MAX_RATING = 5;
@@ -33,9 +32,9 @@ export const DatePill = ({ date }: DatePillProps) => {
             variation="default"
             size="small"
             style={{
-                borderRadius: tokens.radii.full,           // makes it a pill
-                paddingInline: tokens.space.small,         // horizontal padding
-                paddingBlock: `6px`,                       // slight vertical padding
+                borderRadius: tokens.radii.full,
+                paddingInline: tokens.space.small,
+                paddingBlock: `6px`,
                 fontWeight: tokens.fontWeights.medium,
             }}
         >
@@ -51,8 +50,7 @@ export const BacklogItem = ({
                                 image,
                                 rating,
                                 type,
-                                createdAt,
-                                id
+                                createdAt
                             }: BacklogItemProps) => {
     const { tokens } = useTheme();
 

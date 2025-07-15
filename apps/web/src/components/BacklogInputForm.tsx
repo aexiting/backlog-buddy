@@ -45,7 +45,7 @@ export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
                 <Flex direction="row" gap="1rem" justifyContent="space-between">
 
                     <Heading level={4} >
-                        Add to Backlog
+                        {isEditMode ? "Edit Backlog item" : "Add to Backlog"}
                     </Heading>
                     {isEditMode && <Button
                         variation="warning"
@@ -99,14 +99,12 @@ export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
                         isValueHidden={false}
                     />
 
-                    {/* Error banner */}
                     {isError && (
                         <Alert variation="error" isDismissible={true}>
                             Something went wrong—please try again.
                         </Alert>
                     )}
 
-                    {/* Submit */}
                     <Button
                         type="submit"
                         variation="primary"
