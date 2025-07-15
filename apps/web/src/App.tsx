@@ -19,7 +19,8 @@ const App = withAuthenticator(({ signOut, user }: AppProps) => {
     if (!signOut || !user) return <div>An auth error occurred. Please refresh.</div>
 
     const [listState, listActions] = useBacklogList();
-    const [inputState, inputActions] = useBacklogInput({addToBacklogList: listActions.loadMoreBacklog, username: user.username});
+
+    const [inputState, inputActions] = useBacklogInput({addToBacklogList: listActions.loadMoreBacklog, username: user.username, activeItem: listState.activeItem, clearActiveItem: () => listActions.setActiveItem(undefined)});
     return (
         <div>
             <BacklogInputForm state={inputState} actions={inputActions}/>

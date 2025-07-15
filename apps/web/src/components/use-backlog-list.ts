@@ -8,10 +8,12 @@ export type BacklogListState = {
     isError: boolean;
     items: BacklogItem[];
     hasMore: boolean;
+    activeItem?: BacklogItem;
 }
 
 export type BacklogListActions = {
     loadMoreBacklog: () => void;
+    setActiveItem: (item?: BacklogItem) => void;
 }
 
 const initialState: BacklogListState = {
@@ -72,7 +74,6 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
 
     useEffect(() => {
         if (state.items.length > 0) return
-        console.log('fetching')
         fetchBacklog()
     }, [fetchBacklog]);
 
@@ -89,5 +90,9 @@ export const useBacklogList = (): [BacklogListState, BacklogListActions] => {
         });
         return () => sub.unsubscribe();
     }, []);
-    return [state, { loadMoreBacklog }]
+
+    return [state, {
+        loadMoreBacklog,
+        setActiveItem: (item?: BacklogItem) => setState(prevState => ({ ...prevState, activeItem: item }))
+    }]
 }

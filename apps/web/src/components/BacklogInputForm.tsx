@@ -1,4 +1,4 @@
-import { ItemType } from "../API";
+import { ItemStatus, ItemType } from "../API";
 import type { BacklogInputActions, BacklogInputState } from "./use-backlog-input.ts";
 import {
     Alert,
@@ -19,12 +19,11 @@ type BacklogInputFormProps = {
 };
 
 
-
 export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
 
 
-    const { input, isLoading, isError } = state;
-    const { setInput, submitBacklogItem } = actions;
+    const { input, isLoading, isError, isEditMode } = state;
+    const { setInput, submitBacklogItem, submitBacklogEdit, submitBacklogDelete } = actions;
 
     const onChange =
         <K extends keyof typeof input>(key: K) =>
@@ -33,27 +32,38 @@ export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        submitBacklogItem();
+        if (isEditMode) {
+            submitBacklogEdit();
+        } else {
+            submitBacklogItem();
+        }
     };
 
     return (
         <Card>
             <View as="form" onSubmit={handleSubmit}>
-                <Heading level={4} marginBottom="1rem">
-                    Add to Backlog
-                </Heading>
+                <Flex direction="row" gap="1rem" justifyContent="space-between">
 
+                    <Heading level={4} >
+                        Add to Backlog
+                    </Heading>
+                    {isEditMode && <Button
+                        variation="warning"
+                        loadingText="Deleting..."
+                        onClick={()=> submitBacklogDelete()}
+                    >
+                        Delete
+                    </Button>}
+                </Flex>
                 <Flex direction="column" gap="1rem">
-                    {/* Title */}
                     <TextField
                         label="Title"
                         placeholder="Cowboy Bebop"
                         value={input.title}
                         onChange={(e) => onChange('title')(e.target.value)}
                         isRequired
+                        isDisabled={isEditMode}
                     />
-
-                    {/* Type */}
                     <SelectField
                         label="Type"
                         value={input.type}
@@ -62,6 +72,17 @@ export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
                         <option value={ItemType.ANIME}>Anime</option>
                         <option value={ItemType.MANGA}>Manga</option>
                     </SelectField>
+                    {isEditMode && <SelectField
+                        label="Status"
+                        value={input.status}
+                        onChange={(e) => onChange('status')(e.target.value as ItemStatus)}
+                    >
+                        <option value={ItemStatus.COMPLETED}>Completed</option>
+                        <option value={ItemStatus.DROPPED}>Dropped</option>
+                        <option value={ItemStatus.PENDING}>Watching</option>
+                        <option value={ItemStatus.NOT_STARTED}>Not Started</option>
+
+                    </SelectField>}
 
                     {/* Rating 1-10 (optional) */}
                     <SliderField
@@ -92,7 +113,7 @@ export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
                         isLoading={isLoading}
                         loadingText="Adding…"
                     >
-                        Add to backlog
+                        {isEditMode ? 'Update backlog' : 'Add to backlog'}
                     </Button>
                 </Flex>
             </View>

@@ -11,7 +11,7 @@ type BacklogListProps = {
 
 export const BacklogList = ({ state, actions }: BacklogListProps) => {
     const { items, hasMore, isLoading, isError } = state;
-    const { loadMoreBacklog } = actions;
+    const { loadMoreBacklog, setActiveItem } = actions;
     if (!items || items.length == 0) {
         return (
             <div>
@@ -40,6 +40,7 @@ export const BacklogList = ({ state, actions }: BacklogListProps) => {
                     <motion.div
                         key={item.id}
                         whileHover={{ scale: 1.05 }}
+                        onClick={() => setActiveItem(item)}
                     >
                         <BacklogItem {...item} />
                     </motion.div>

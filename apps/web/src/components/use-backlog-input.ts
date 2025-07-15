@@ -1,7 +1,7 @@
-import { type BacklogItem, type CreateBacklogItemInput, ItemType } from "../API.ts";
+import { type BacklogItem, type CreateBacklogItemInput, ItemStatus, ItemType } from "../API.ts";
 import { generateClient } from "aws-amplify/api";
-import { useCallback, useState } from "react";
-import { createBacklogItem } from "../graphql";
+import { useCallback, useEffect, useState } from "react";
+import { createBacklogItem, deleteBacklogItem, updateBacklogItem } from "../graphql";
 
 export interface MediaMeta {
     fullTitle: string;
@@ -24,27 +24,37 @@ export const fetchMediaMeta = (title: string, type: ItemType): MediaMeta => {
 type UseBacklogInputProps = {
     addToBacklogList: (newItem: BacklogItem) => void;
     username: string;
+    activeItem: BacklogItem
+    clearActiveItem: () => void;
 }
 
-type FormInput = Pick<CreateBacklogItemInput, 'title' | 'rating' | 'type'>;
+type FormInput = Pick<CreateBacklogItemInput, 'title' | 'rating' | 'type' | 'status'>;
 export type BacklogInputState = {
     isLoading: boolean;
     isError: boolean;
-    input: FormInput
+    input: FormInput;
+    isEditMode: boolean;
 }
 export type BacklogInputActions = {
     setInput: (form: FormInput) => void;
     submitBacklogItem: () => void;
+    submitBacklogEdit: () => void;
+    submitBacklogDelete: () =>  void;
 }
 
-const initialInput = { title: '', rating: 3, type: ItemType.ANIME };
+const initialInput = { title: '', rating: 3, type: ItemType.ANIME, status: ItemStatus.NOT_STARTED };
 const initialState: BacklogInputState = {
     isLoading: false,
     isError: false,
-    input: initialInput
+    input: initialInput,
+    isEditMode: false
 }
 
-export const useBacklogInput = ({ addToBacklogList, username }: UseBacklogInputProps): [BacklogInputState, BacklogInputActions] => {
+export const useBacklogInput = ({
+                                    username,
+                                    activeItem,
+                                    clearActiveItem
+                                }: UseBacklogInputProps): [BacklogInputState, BacklogInputActions] => {
     // make a function that will take the input and make a new row for backlog stuff.
     // set up state
     // based on state create new backlog function and add it
@@ -53,6 +63,52 @@ export const useBacklogInput = ({ addToBacklogList, username }: UseBacklogInputP
 
     const [state, setState] = useState(initialState);
 
+    useEffect(() => {
+        if (!activeItem) {
+            return
+        }
+        console.log(activeItem.title)
+        setState(prevState => ({
+            ...prevState,
+            isEditMode: true,
+            input: {
+                ...prevState.input,
+                rating: activeItem.rating,
+                type: activeItem.type,
+                status: activeItem.status,
+                title: activeItem.title
+            }
+        }))
+    }, [activeItem]);
+
+    const submitBacklogEdit = useCallback(async () => {
+        setState(prevState => ({ ...prevState, isLoading: true, isError: false }))
+        const backlogItem = {
+            id: activeItem.id,
+            rating: state.input.rating,
+            status: state.input.status,
+            type: state.input.type,
+        }
+        try {
+            const response = await client.graphql({
+                query: updateBacklogItem,
+                variables: {
+                    input: backlogItem
+                },
+                authMode: "userPool"
+            })
+            console.log(response)
+
+            setState(prevState => ({ ...prevState, input: initialInput, isEditMode: false }));
+            clearActiveItem()
+        } catch (err) {
+
+            setState(prevState => ({ ...prevState, isError: true }))
+            console.log(`error editing backlog item`, err)
+        } finally {
+            setState(prevState => ({ ...prevState, isLoading: false }))
+        }
+    }, [state.input])
 
     const submitBacklogItem = useCallback(async () => {
         if (!state.input.title?.trim()) return;
@@ -64,7 +120,7 @@ export const useBacklogInput = ({ addToBacklogList, username }: UseBacklogInputP
             image,
             title: fullTitle ?? state.input.title,
             rating: state.input.rating,
-            status: "NOT_STARTED",
+            status: ItemStatus.NOT_STARTED,
             type: state.input.type,
             owner: username // Note to change this to be what
         }
@@ -88,10 +144,37 @@ export const useBacklogInput = ({ addToBacklogList, username }: UseBacklogInputP
             setState(prevState => ({ ...prevState, isLoading: false }))
         }
     }, [state.input])
+    const submitBacklogDelete = useCallback(async () => {
+        setState(prevState => ({ ...prevState, isLoading: true, isError: false }))
+        const backlogItem = {
+            id: activeItem.id,
+        }
+        try {
+            const response = await client.graphql({
+                query: deleteBacklogItem,
+                variables: {
+                    input: backlogItem
+                },
+                authMode: "userPool"
+            })
+            console.log(response)
+
+            setState(prevState => ({ ...prevState, input: initialInput, isEditMode: false }));
+            clearActiveItem()
+        } catch (err) {
+
+            setState(prevState => ({ ...prevState, isError: true }))
+            console.log(`error editing backlog item`, err)
+        } finally {
+            setState(prevState => ({ ...prevState, isLoading: false }))
+        }
+    }, [state.input])
 
     return [state, {
-        setInput: (input: FormInput) => setState(prevState => ({ ...prevState, input: input })),
-        submitBacklogItem
+        setInput: (input: FormInput) => setState(prevState => ({ ...prevState, input: {...prevState, ...input} })),
+        submitBacklogItem,
+        submitBacklogEdit,
+        submitBacklogDelete
     }]
 
 }
