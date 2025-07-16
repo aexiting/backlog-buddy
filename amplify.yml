@@ -5,8 +5,8 @@ frontend:
   phases:
     preBuild:
       commands:
+        - npm install
         - npm ci
-
         - npx playwright install --with-deps
     build:
       commands:
