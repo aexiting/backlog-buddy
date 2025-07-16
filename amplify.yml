@@ -8,6 +8,19 @@ frontend:
       commands:
         - npm install
         - npm ci
+        - |
+          yum install -y \
+          libicu69 libicu69-devel \
+          libatomic \
+          libjpeg-turbo libjpeg-turbo-devel \
+          libwebp libwebp-devel \
+          enchant2 enchant2-devel \
+          hyphen hyphen-devel \
+          libffi libffi-devel \
+          libevdev libevdev-devel \
+          x264-libs \
+          woff2 \
+          woff2-devel
         - npx playwright install
     build:
       commands:
