@@ -1,5 +1,6 @@
 # amplify.yml – root‑centric
 version: 1
+image: mcr.microsoft.com/playwright:v1.45.0-jammy
 
 frontend:
   phases:
