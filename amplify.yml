@@ -7,9 +7,10 @@ frontend:
       commands:
         - npm install
         - npm ci
+        - npm ci --prefix apps/web
     build:
       commands:
-        - npm run build --workspace=apps/web
+        - npm run build --prefix apps/web
   artifacts:
     baseDirectory: apps/web/dist
     files:
