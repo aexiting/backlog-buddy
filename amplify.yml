@@ -7,7 +7,7 @@ frontend:
       commands:
         - npm install
         - npm ci
-        - npx playwright install --with-deps
+        - npx playwright install
     build:
       commands:
         - npm run build --workspace=apps/web
@@ -19,13 +19,13 @@ frontend:
     paths:
       - node_modules/**/*
       - apps/web/node_modules/**/*
-      - ~/.cache/ms-playwright   # speeds subsequent builds
+      - ~/.cache/ms-playwright
 
 test:
   phases:
     test:
       commands:
-        - npx playwright install --with-deps
+        - npx playwright install
         - npx playwright test --reporter=html,line --output=playwright-report
   artifacts:
     baseDirectory: playwright-report
