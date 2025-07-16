@@ -116,6 +116,7 @@ export const BacklogInputForm = ({ state, actions }: BacklogInputFormProps) => {
                         variation="primary"
                         isLoading={isLoading}
                         loadingText="Adding…"
+                        name="save"
                     >
                         {isEditMode ? 'Update backlog' : 'Add to backlog'}
                     </Button>

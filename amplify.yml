@@ -1,20 +1,35 @@
+# amplify.yml – root‑centric
 version: 1
+
 frontend:
   phases:
     preBuild:
       commands:
-        - cd apps/web
+        # 1. Install root dev‑dependencies (Playwright etc.)
         - npm ci
+
+        # 2. Install the web‑app deps
+        - npm ci --prefix apps/web
+
+        # 3. Download Playwright browsers only once
         - npx playwright install --with-deps
     build:
       commands:
-        - cd apps/web
-        - npm run build
-        - npm run test:e2e
+        # Build the Vite site
+        - npm run build --prefix apps/web
   artifacts:
     baseDirectory: apps/web/dist
     files:
       - '**/*'
   cache:
     paths:
+      - node_modules/**/*
       - apps/web/node_modules/**/*
+      - ~/.cache/ms-playwright   # speeds subsequent builds
+
+test:
+  phases:
+    test:
+      commands:
+        # Runs e2e tests defined in root/package.json
+        - npm run test:e2e
