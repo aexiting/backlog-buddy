@@ -7,12 +7,10 @@ frontend:
       commands:
         - npm ci
 
-        - npm ci --prefix apps/web
-
         - npx playwright install --with-deps
     build:
       commands:
-        - npm run build --prefix apps/web
+        - npm run build --workspace=apps/web
   artifacts:
     baseDirectory: apps/web/dist
     files:
