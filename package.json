@@ -1,5 +1,14 @@
 {
   "dependencies": {
-    "@aws-amplify/ui-react-core": "^3.4.3"
+    "@aws-amplify/ui-react-core": "^3.4.3",
+    "again": "^0.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^24.0.14",
+    "vite": "^5.0.0"
+  },
+  "scripts": {
+    "build" : "cd apps/web/  \n npm run build"
   }
 }

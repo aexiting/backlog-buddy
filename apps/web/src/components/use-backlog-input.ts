@@ -24,7 +24,7 @@ export const fetchMediaMeta = (title: string, type: ItemType): MediaMeta => {
 type UseBacklogInputProps = {
     addToBacklogList: (newItem: BacklogItem) => void;
     username: string;
-    activeItem: BacklogItem
+    activeItem?: BacklogItem
     clearActiveItem: () => void;
 }
 
@@ -82,6 +82,8 @@ export const useBacklogInput = ({
     }, [activeItem]);
 
     const submitBacklogEdit = useCallback(async () => {
+        if (!activeItem) return;
+
         setState(prevState => ({ ...prevState, isLoading: true, isError: false }))
         const backlogItem = {
             id: activeItem.id,
@@ -90,7 +92,7 @@ export const useBacklogInput = ({
             type: state.input.type,
         }
         try {
-            const response = await client.graphql({
+            await client.graphql({
                 query: updateBacklogItem,
                 variables: {
                     input: backlogItem
@@ -116,12 +118,12 @@ export const useBacklogInput = ({
 
         const { image, fullTitle } = fetchMediaMeta(state.input.title, state.input.type)
         const backlogItem = {
-            image,
+            image: image ?? "testimage.png",
             title: fullTitle ?? state.input.title,
             rating: state.input.rating,
             status: ItemStatus.NOT_STARTED,
             type: state.input.type,
-            owner: username // Note to change this to be what
+            owner: username, // Note to remove this once I get automatically working
         }
         try {
             const response = await client.graphql({
@@ -145,6 +147,8 @@ export const useBacklogInput = ({
     }, [state.input])
     
     const submitBacklogDelete = useCallback(async () => {
+        if (!activeItem) return;
+
         setState(prevState => ({ ...prevState, isLoading: true, isError: false }))
         const backlogItem = {
             id: activeItem.id,

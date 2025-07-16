@@ -29,14 +29,11 @@ export const DatePill = ({ date }: DatePillProps) => {
 
     return (
         <Badge
-            variation="default"
             size="small"
-            style={{
-                borderRadius: tokens.radii.full,
-                paddingInline: tokens.space.small,
-                paddingBlock: `6px`,
-                fontWeight: tokens.fontWeights.medium,
-            }}
+            borderRadius={tokens.radii.full}
+            paddingInline={tokens.space.small}
+            fontWeight={tokens.fontWeights.medium}
+            paddingBlock="6px"
         >
             {formatted}
         </Badge>
@@ -47,7 +44,6 @@ export const DatePill = ({ date }: DatePillProps) => {
 export const BacklogItem = ({
                                 status,
                                 title,
-                                image,
                                 rating,
                                 type,
                                 createdAt
