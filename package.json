@@ -9,6 +9,7 @@
     "vite": "^5.0.0"
   },
   "scripts": {
-    "build" : "cd apps/web/  \n npm run build"
+    "build" : "cd apps/web/  \n npm run build",
+    "test:e2e" : "npx playwright test --project=chrome"
   }
 }

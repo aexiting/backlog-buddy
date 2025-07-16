@@ -5,17 +5,13 @@ frontend:
   phases:
     preBuild:
       commands:
-        # 1. Install root dev‑dependencies (Playwright etc.)
         - npm ci
 
-        # 2. Install the web‑app deps
         - npm ci --prefix apps/web
 
-        # 3. Download Playwright browsers only once
         - npx playwright install --with-deps
     build:
       commands:
-        # Build the Vite site
         - npm run build --prefix apps/web
   artifacts:
     baseDirectory: apps/web/dist
@@ -31,5 +27,12 @@ test:
   phases:
     test:
       commands:
-        # Runs e2e tests defined in root/package.json
-        - npm run test:e2e
+        - npx playwright install --with-deps
+        - npx playwright test --reporter=html,line --output=playwright-report
+  artifacts:
+    baseDirectory: playwright-report
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - ~/.cache/ms-playwright
